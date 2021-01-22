@@ -1,0 +1,28 @@
+/* add your CSS here */
+body {
+      font-family: 'VT323', monospace;
+      font-size: 48px;
+    }
+.container {
+        text-align: center;
+        width: 500px;
+        background-color: #D2B48C;
+        padding: 1px;
+        border-color: red;
+        border: 10px;
+        border-style: double;
+    }
+ul {
+    font-style: italic;
+    list-style: none;
+    text-align: left;
+    font-size: 36px;
+  }
+/* li {
+    font-style: italic;
+    font-weight: bold;
+  } */
+.liststyle {
+  color: blue;
+  font-weight: bold;
+}
