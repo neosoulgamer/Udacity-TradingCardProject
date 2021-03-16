@@ -1,136 +1,120 @@
 class Pokemon:
-  def __init__(self, name, level, type, is_knocked_out):
+  def __init__(self, name, level, element, max_health, cur_health, knocked_out):
     self.name = name
     self.level = level
-    self.type = type
-    self.is_knocked_out = is_knocked_out
-    self.exp = 0
-    self.max_health = level
-    self.health = self.max_health
-  
-  def __repr__(self):
-    return "Pokemon info. {}, current level: {}, type: {}, maximun health: {}, current health: {}.\n".format(self.name, self.level, self.type, self.max_health, self.health)
-  
-  def lose_health(self, dmg):
-    self.health -= dmg
-    if self.health <= 0:
-      self.health = 0
-      self.knock_out()
-  
-  def gain_health(self, heal):
-    self.health += heal
-    print("{} gained {} health".format(self.name, heal))
-    print("{}'s health: {}".format(self.name, self.health))
-  
-  def knock_out(self):
-    if self.is_knocked_out:
-      print("{name} is already knocked out.".format(name = self.name))
-    else:
-      self.is_knocked_out = True
-      print("{name} is knocked out!".format(name = self.name))
-  
-  def revive(self):
-    if self.is_knocked_out:
-      self.is_knocked_out = False
-      self.health = 1
-      print("{name} has been revived with {health} health!".format(name = self.name, health = self.health))
-    else:
-      print("{name} is not knocked out.".format(name = self.name))
-  
-  def attack(self, other, dmg):
-    if self.is_knocked_out == True:
-      print("You can not attack. {pokemon} is knocked out!".format(pokemon = self.name))
-      return
-    if self.type == 'Water':
-      if other.type == 'Fire':
-        dmg *= 2
-      elif other.type == 'Grass':
-        dmg /= 2
-    elif self.type == 'Fire':
-      if other.type == 'Grass':
-        dmg *= 2
-      elif other.type == 'Water':
-        dmg /= 2
-    elif self.type == 'Grass':
-      if other.type == 'Water':
-        dmg *= 2
-      elif other.type == 'Fire':
-        dmg /= 2
-    other.lose_health(dmg)
-    print("{} attacked {}".format(self.name, other.name))
-    print("{} dealt {} damage to {}. His health is {}.".format(self.name, dmg, other.name, other.health))
-    self.gain_exp(1)
-  
-  def gain_exp(self, exp):
-    self.exp += exp
-    print("{} gained {} xp.\n".format(self.name, exp))
-    if self.exp >= 3:
-      self.level_up()
-  
-  def level_up(self):
-    self.exp = 0
-    self.level += 1
-    self.max_health += 1
-    self.health = self.max_health
-    print("{} leveled up to level {}! Max health now is {}. Health fully regenerated.\n".format(self.name, self.level, self.max_health))
- 
+    self.element = element
+    self.max_health = max_health
+    self.cur_health = cur_health
+    self.knocked_out = knocked_out
 
+  def __repr__(self):
+    return "Pokemon Initialized."
+
+  def lose_health(self, dmg):
+    self.cur_health -= dmg
+    print ("{} has lost {} health.".format(self.name, self.dmg))
+
+  def gain_health(self, heal):
+    self.cur_health += heal
+    print ("{} has gained {} health.".format(self.name, self.dmg))
+
+  def knock_out(self):
+    if self.cur_health <= 0:
+      self.knocked_out = True
+      print ("{} has been Knocked Out!".format(self.name))
+    else:
+      print("{} has {} health remaining".format(self.name, self.cur_health))
+
+  def revive(self):
+    if self.knocked_out:
+      self.knocked_out = False
+      self.cur_health = 1
+      print("{} has been revived! {} health remaining".format(self.name, self.cur_health))
+    else:
+      print("{} is still alive. {} health remaining".format(self.name, self.cur_health))
+
+  def attack(self, Pokemon):
+    if self.knocked_out:
+      print("{} is currently knocked out! Cannot attack".format(self.name))
+    else:
+      dmg_done = self.level
+      if self.element == "Water":
+        if Pokemon.element == "Fire":
+          dmg_done = self.level * 2
+          Pokemon.cur_health -= dmg_done
+        elif Pokemon.element == "Grass":
+          dmg_done = self.level / 2
+          Pokemon.cur_health -= dmg_done
+        else:
+          Pokemon.cur_health -= self.level
+        print("{} has done {} damage to {}".format(self.name, dmg_done, Pokemon.name))
+      elif self.element == "Fire":
+        if Pokemon.element == "Grass":
+          dmg_done = self.level * 2
+          Pokemon.cur_health -= dmg_done
+        elif Pokemon.element == "Water":
+          dmg_done = self.level / 2
+          Pokemon.cur_health -= dmg_done
+        else:
+          Pokemon.cur_health -= self.level
+        print("{} has done {} damage to {}".format(self.name, dmg_done, Pokemon.name))
+      else:
+        if Pokemon.element == "Water":
+          dmg_done = self.level * 2
+          Pokemon.cur_health -= dmg_done
+        elif Pokemon.element == "Fire":
+          dmg_done = self.level / 2
+          Pokemon.cur_health -= dmg_done
+        else:
+          Pokemon.cur_health -= self.level
+        print("{} has done {} damage to {}".format(self.name, dmg_done, Pokemon.name))
+      return dmg_done 
+
+
+
+
+squirtle = Pokemon("Squirt", 5, "Water", 50, 50, False)
+bulbasaur = Pokemon("Bulba", 5, "Grass", 50, 50, False)
+charmander = Pokemon("Charm", 5, "Fire", 50, 50, False)
+
+# squirtle.attack(bulbasaur)
+#bulbasaur.attack(squirtle)
+
+#print(squirtle)
+#print(bulbasaur)
 
 class Trainer:
-  def __init__(self, name, pokemons, potions, current_pokemon):
+  def __init__(self, name, potions, active_pokemon, pokemen):
     self.name = name
-    self.pokemons = pokemons
     self.potions = potions
-    self.current_pokemon = current_pokemon
-  
+    self.active_pokemon = active_pokemon
+    self.pokemen = pokemen
+
   def __repr__(self):
-    return "Trainer info. {name}, has pokemons: {pokemons}, has {potions} potions, current pokemon is {current_pokemon}.".format(name = self.name, pokemons = self.pokemons, potions = self.potions, current_pokemon = self.current_pokemon)
-  
+    return "Trainer Initialized."
+
   def use_potion(self):
+    amount_healed = 20
     if self.potions > 0:
-      if self.current_pokemon.health < self.current_pokemon.max_health:
-        self.current_pokemon.gain_health(1)
-        self.potions -= 1
-        print("{} has {} potions left.\n".format(self.name, self.potions))
-      else:
-        print("{} failed to use a potion on {}. Your pokemon has maximum health.\n".format(self.name, self.current_pokemon.name))
+      self.pokemen[self.active_pokemon].cur_health += amount_healed
+      self.potions -= 1
     else:
-      print("{}, you have no potions!\n".format(self.name))
-  
-  def attack(self, other, dmg):
-    self.current_pokemon.attack(other.current_pokemon, dmg)
-  
-  def switch_pokemon(self, pokemon):
-    if pokemon.is_knocked_out == True:
-      print("You can't switch to a knocked out pokemon!")
-    elif pokemon in self.pokemons:
-      self.current_pokemon = pokemon
-      print("{} switched a pokemon. {}'s current pokemon now is {}.\n".format(self.name, self.name, self.current_pokemon.name))
+      print("You do not have any potions.")
 
+  def attack_other_trainer(self, Trainer):
+    dmg_done = self.pokemen[self.active_pokemon].attack(Trainer.pokemen[Trainer.active_pokemon])
+    print("{} has done {} damage to {}".format(self.pokemen[self.active_pokemon].name, dmg_done, Trainer.pokemen[Trainer.active_pokemon].name))
 
+  def set_active(self, new_active_pokemon):
+    self.active_pokemon = new_active_pokemon
+    print("{} has been deployed".format(self.pokemen[self.active_pokemon].name))
 
-class Charmander(Pokemon):
-  def __init__(self, name, level, type, is_knocked_out):
-    super().__init__(name, level, type, is_knocked_out)
-  
-  def destroy(self, other):
-    other.lose_health(other.health)
-    print("{} totally destroyed {}!".format(self.name, other.name))
+Trainer1 = Trainer("Chance", 5, 0, [squirtle, charmander])
+Trainer2 = Trainer("Devon", 3, 0, [squirtle, charmander])
+#print(Trainer1)
+#print(Trainer2)
 
+# Testing functions below
 
-# The game
-pikachu = Pokemon("Pikachu", 3, "Fire", False)
-bulbasaur = Pokemon("Bulbasaur", 3, "Grass", False)
-squirtle = Pokemon("Squirtle", 3, "Water", False)
-charmander = Charmander("Charmander", 3, "Fire", False)
-
-erika = Trainer('Erika', [pikachu], 2, pikachu)
-ramos = Trainer('Ramos', [bulbasaur, squirtle], 2, bulbasaur)
-
-print(pikachu)
-print(bulbasaur)
-
-# Function Tests are below
-# pikachu.lose_health(1)
-# pikachu.gain_health(1)
-# pikachu.gain_exp(3)
+#Trainer1.attack_other_trainer(Trainer2)
+#Trainer1.set_active(0)
